@@ -18,6 +18,8 @@ void dump_club(struct gameb::club &club);
 
 void print_club_name(int16_t idx, bool newline = true);
 
+void dump_gadgets();
+
 void dump_gamec();
 
 void dump_player(struct gamec::player &player);
@@ -168,6 +170,9 @@ int main(int argc, char *argv[]) {
 	assert(sizeof (struct gamea)         == 0x7372);
 	assert(sizeof (struct gameb::club)   == 0x023A);
 	assert(sizeof (struct gamec::player) == 0x0028);
+
+//    load_gadgets(game_path);
+//    dump_gadgets();
 
     load_binaries(game_nr, saves_path);
 
@@ -1537,6 +1542,26 @@ void dump_gamec() {
         struct gamec::player &player = get_player(i);
         dump_player(player);
     }
+}
+
+void dump_gadgets() {
+    int32_t total = 0;
+    for (int i = 0; i < 406; ++i) {
+        printf("GADGET OFFSET: %x %d\n",
+               gadgets_offsets.sprite[i].address,
+               gadgets_offsets.sprite[i].length
+        );
+        total += gadgets_offsets.sprite[i].length;
+    }
+    printf("TOTAL: %d\n\n\n", total);
+
+    for (int i = 0; i < sizeof(struct gadgets_offsets::sprite); ++i) {
+        printf("GADGET: %d %d\n",
+               gadgets.width, gadgets.height
+        );
+    }
+
+    exit(0);
 }
 
 void dump_player(struct gamec::player &p) {

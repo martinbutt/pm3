@@ -736,6 +736,22 @@ struct prefs {
 
 extern prefs prefs;
 
+struct gadgets{
+   int16_t width;
+   int16_t height;
+} __attribute__ ((packed));
+
+extern gadgets gadgets;
+
+struct gadgets_offsets {
+    struct sprite {
+        int16_t address;
+        uint32_t length;
+    } __attribute__ ((packed)) sprite[406];
+} __attribute__ ((packed));
+
+extern gadgets_offsets gadgets_offsets;
+
 struct club_player {
     struct gameb::club club;
     struct gamec::player player;
@@ -762,6 +778,7 @@ void load_default_gamedata(const char *game_path);
 void load_default_clubdata(const char *game_path);
 void load_default_playdata(const char *game_path);
 void load_metadata(const char *saves_path);
+void load_gadgets(const char *game_path);
 void save_binaries(int game_nr, const char *saves_path);
 void update_metadata(int game_nr);
 void save_metadata(const char *saves_path);

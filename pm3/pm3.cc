@@ -10,9 +10,11 @@ struct gameb gameb;
 struct gamec gamec;
 struct saves saves;
 struct prefs prefs;
+struct gadgets gadgets;
+struct gadgets_offsets gadgets_offsets;
 
-char *gamexa = nullptr, *gamexb = nullptr, *gamexc = nullptr, *savesx = nullptr, *prefsx = nullptr;
-FILE *fga = nullptr, *fgb = nullptr, *fgc = nullptr, *fgs = nullptr, *fgf = nullptr;
+char *gamexa = nullptr, *gamexb = nullptr, *gamexc = nullptr, *savesx = nullptr, *prefsx = nullptr, *gadgetsx = nullptr, *gadgets_offsetsx = nullptr;
+FILE *fga = nullptr, *fgb = nullptr, *fgc = nullptr, *fgs = nullptr, *fgf = nullptr, *fgg = nullptr, *fgo = nullptr;
 
 void check_consistency()
 {
@@ -378,6 +380,28 @@ void load_metadata(const char *saves_path) {
     }
     fread(&prefs, sizeof (struct prefs), 1, fgf);
     fclose(fgf);
+}
+
+void load_gadgets(const char *game_path) {
+    char* full_path = append_trailing_slash(game_path);
+
+    size_t gadgets_len = asprintf(&gadgetsx, "%sgadgets.dat", full_path != nullptr ? full_path : "");
+    fgg = fopen(gadgetsx, "r");
+    if (fgg == nullptr) {
+        printf("Could not open file: %s\n", gadgetsx);
+        exit(EXIT_FAILURE);
+    }
+    fread(&gadgets, sizeof (struct gadgets), 1, fgg);
+    fclose(fgg);
+
+    size_t gadgetsoff_len = asprintf(&gadgets_offsetsx, "%sgadgets.off", full_path != nullptr ? full_path : "");
+    fgo = fopen(gadgets_offsetsx, "r");
+    if (fgo == nullptr) {
+        printf("Could not open file: %s\n", gadgets_offsetsx);
+        exit(EXIT_FAILURE);
+    }
+    fread(&gadgets_offsets, sizeof (struct gadgets_offsets), 1, fgo);
+    fclose(fgo);
 }
 
 void save_binaries(int game_nr, const char *saves_path) {
