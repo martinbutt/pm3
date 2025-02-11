@@ -313,22 +313,22 @@ void load_binaries(int game_nr, const std::string& game_path) {
 }
 
 void load_default_gamedata(const std::string& game_path) {
-    load_binary_file(construct_game_file_path(game_path, "gamedata.dat"), gamec);
+    load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), gamec);
 }
 
 void load_default_clubdata(const std::string& game_path) {
-    load_binary_file(construct_game_file_path(game_path, "clubdata.dat"), gamec);
+    load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), gamec);
 }
 
 void load_default_playdata(const std::string& game_path) {
-    load_binary_file(construct_game_file_path(game_path, "playdata.dat"), gamec);
+    load_binary_file(construct_game_file_path(game_path, PLAYDATA_FILE), gamec);
 }
 
 void load_metadata(const std::string& game_path) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
-    load_binary_file(full_path / "SAVES.DIR", saves);
-    load_binary_file(full_path / "PREFS", prefs);
+    load_binary_file(full_path / SAVES_DIR_FILE, saves);
+    load_binary_file(full_path / PREFS_FILE, prefs);
 }
 
 void save_binaries(int game_nr, const std::string& game_path) {
@@ -340,8 +340,8 @@ void save_binaries(int game_nr, const std::string& game_path) {
 void save_metadata(const std::string& game_path) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
-    save_binary_file(full_path / "SAVES.DIR", saves);
-    save_binary_file(full_path / "PREFS", prefs);
+    save_binary_file(full_path / SAVES_DIR_FILE, saves);
+    save_binary_file(full_path / PREFS_FILE, prefs);
 }
 
 void update_metadata(int game_nr) {
@@ -358,7 +358,7 @@ std::filesystem::path construct_saves_folder_path(const std::string &game_path) 
 }
 
 std::filesystem::path construct_save_file_path(const std::string &game_path, int game_number, char game_letter) {
-    return construct_saves_folder_path(game_path) / ("GAME" + std::to_string(game_number) + game_letter);
+    return construct_saves_folder_path(game_path) / (GAME_FILE_PREFIX + std::to_string(game_number) + game_letter);
 }
 
 std::filesystem::path construct_game_file_path(const std::string &game_path, const std::string &file_name) {

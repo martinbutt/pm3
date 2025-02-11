@@ -25,6 +25,13 @@
 #define EXE_STANDARD_FILENAME "pm3game.exe"
 #define EXE_DELUXE_FILENAME "pm3.exe"
 
+#define GAMEDATA_FILE "gamedata.dat"
+#define CLUBDATA_FILE "clubdata.dat"
+#define PLAYDATA_FILE "playdata.dat"
+#define SAVES_DIR_FILE "SAVES.DIR"
+#define PREFS_FILE "PREFS"
+#define GAME_FILE_PREFIX "GAME"
+
 #ifdef _WIN32
 #define PATH_SEPARATOR '\\'
 #else
