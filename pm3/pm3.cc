@@ -289,7 +289,7 @@ void level_aggression() {
 }
 
 template <typename T>
-void load_binary_file(const std::string& filepath, T& data) {
+void load_binary_file(const std::string &filepath, T &data) {
     std::ifstream file(filepath, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Could not open file for reading: " + filepath);
@@ -298,7 +298,7 @@ void load_binary_file(const std::string& filepath, T& data) {
 }
 
 template <typename T>
-void save_binary_file(const std::string& filepath, const T& data) {
+void save_binary_file(const std::string &filepath, const T &data) {
     std::ofstream file(filepath, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Could not open file for writing: " + filepath);
@@ -306,38 +306,38 @@ void save_binary_file(const std::string& filepath, const T& data) {
     file.write(reinterpret_cast<const char*>(&data), sizeof(T));
 }
 
-void load_binaries(int game_nr, const std::string& game_path) {
+void load_binaries(int game_nr, const std::string &game_path) {
     load_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
     load_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
     load_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
 }
 
-void load_default_gamedata(const std::string& game_path) {
+void load_default_gamedata(const std::string &game_path) {
     load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), gamec);
 }
 
-void load_default_clubdata(const std::string& game_path) {
+void load_default_clubdata(const std::string &game_path) {
     load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), gamec);
 }
 
-void load_default_playdata(const std::string& game_path) {
+void load_default_playdata(const std::string &game_path) {
     load_binary_file(construct_game_file_path(game_path, PLAYDATA_FILE), gamec);
 }
 
-void load_metadata(const std::string& game_path) {
+void load_metadata(const std::string &game_path) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
     load_binary_file(full_path / SAVES_DIR_FILE, saves);
     load_binary_file(full_path / PREFS_FILE, prefs);
 }
 
-void save_binaries(int game_nr, const std::string& game_path) {
+void save_binaries(int game_nr, const std::string &game_path) {
     save_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
     save_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
     save_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
 }
 
-void save_metadata(const std::string& game_path) {
+void save_metadata(const std::string &game_path) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
     save_binary_file(full_path / SAVES_DIR_FILE, saves);
