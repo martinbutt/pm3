@@ -288,7 +288,7 @@ void level_aggression() {
     }
 }
 
-void load_binaries(int game_nr, const char *saves_path) {
+void load_binaries(int game_nr, char *saves_path) {
     char* full_path = append_trailing_slash(saves_path);
 
     size_t gamexa_len = asprintf(&gamexa, "%sGAME%.1dA", full_path != nullptr ? full_path : "", game_nr);
@@ -319,7 +319,7 @@ void load_binaries(int game_nr, const char *saves_path) {
     fclose(fgc);
 }
 
-void load_default_gamedata(const char *game_path) {
+void load_default_gamedata(char *game_path) {
     char *full_path = append_trailing_slash(game_path);
 
     size_t gamexa_len = asprintf(&gamexa, "%sgamedata.dat", full_path != nullptr ? full_path : "");
@@ -332,7 +332,7 @@ void load_default_gamedata(const char *game_path) {
     fclose(fga);
 }
 
-void load_default_clubdata(const char *game_path) {
+void load_default_clubdata(char *game_path) {
     char *full_path = append_trailing_slash(game_path);
 
     size_t gamexb_len = asprintf(&gamexb, "%sclubdata.dat", full_path != nullptr ? full_path : "");
@@ -345,7 +345,7 @@ void load_default_clubdata(const char *game_path) {
     fclose(fgb);
 }
 
-void load_default_playdata(const char *game_path) {
+void load_default_playdata(char *game_path) {
     char *full_path = append_trailing_slash(game_path);
 
     size_t gamexc_len = asprintf(&gamexc, "%splaydata.dat", full_path != nullptr ? full_path : "");
@@ -358,7 +358,7 @@ void load_default_playdata(const char *game_path) {
     fclose(fgc);
 }
 
-void load_metadata(const char *saves_path) {
+void load_metadata(char *saves_path) {
     char* full_path = append_trailing_slash(saves_path);
 
     size_t saves_len = asprintf(&savesx, "%sSAVES.DIR", full_path != nullptr ? full_path : "");
@@ -380,7 +380,7 @@ void load_metadata(const char *saves_path) {
     fclose(fgf);
 }
 
-void save_binaries(int game_nr, const char *saves_path) {
+void save_binaries(int game_nr, char *saves_path) {
 
     char* full_path = append_trailing_slash(saves_path);
 
@@ -409,7 +409,7 @@ void update_metadata(int game_nr) {
     saves.game[game_nr - 1].manager[1].club_idx = gamea.manager[1].club_idx;
 }
 
-void save_metadata(const char *saves_path) {
+void save_metadata(char *saves_path) {
     char* full_path = append_trailing_slash(saves_path);
 
     size_t saves_len = asprintf(&savesx, "%sSAVES.DIR", full_path != nullptr ? full_path : "");
@@ -423,17 +423,15 @@ void save_metadata(const char *saves_path) {
     fclose(fgf);
 }
 
-char* append_trailing_slash(const char* path) {
-    char* appended_path = const_cast<char *>(path);
-
+char* append_trailing_slash(char* path) {
     size_t len = strlen(path);
     if (len == 0 || path[len - 1] == '/' || path[len - 1] == '\\') {
-        return appended_path;
+        return path;
     }
 
-    appended_path[len] = PATH_SEPARATOR;
-    appended_path[len + 1] = '\0'; // Null-terminate the string
-    return appended_path;
+    path[len] = PATH_SEPARATOR;
+    path[len + 1] = '\0';
+    return path;
 }
 
 pm3_game_type get_pm3_game_type(const char *game_path) {
