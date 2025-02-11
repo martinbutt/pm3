@@ -212,10 +212,6 @@ int main(int argc, char *argv[]) {
         save_metadata(game_path);
     }
 
-    free(gamexa);
-    free(gamexb);
-    free(gamexc);
-
     return EXIT_SUCCESS;
 }
 
