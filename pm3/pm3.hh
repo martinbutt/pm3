@@ -18,7 +18,6 @@
 
 #define HOME 0
 #define AWAY 1
-#define DEFAULT_MANAGER_NAME "J.Smith         "
 
 #define STANDARD_SAVES_PATH "SAVES"
 #define DELUXE_SAVES_PATH "saves"
@@ -758,18 +757,20 @@ uint8_t determine_player_rating(struct gamec::player &player);
 std::vector<club_player> find_free_players();
 std::vector<club_player> get_my_players(int player);
 
-void change_club(int16_t new_club_idx, int player = 0);
+void change_club(int16_t new_club_idx, const char* game_path, int player=0);
 void level_aggression();
 
 void check_consistency(void);
-void load_binaries(int game_nr, const std::string& game_path);
-void load_default_gamedata(const std::string& game_path);
-void load_default_clubdata(const std::string& game_path);
-void load_default_playdata(const std::string& game_path);
-void load_metadata(const std::string& game_path);
-void save_binaries(int game_nr, const std::string& game_path);
+
+void load_binaries(int game_nr, const std::string &game_path, struct gamea &game_data=gamea, struct gameb &club_data=gameb, struct gamec &player_data=gamec);
+void load_default_gamedata(const std::string &game_path, struct gamea &game_data=gamea);
+void load_default_clubdata(const std::string &game_path, struct gameb &club_data=gameb);
+void load_default_playdata(const std::string &game_path, struct gamec &player_data=gamec);
+void load_metadata(const std::string &game_path, struct saves &saves_dir_data=saves, struct prefs &prefs_data=prefs);
+void save_binaries(int game_nr, const std::string &game_path, struct gamea &game_data=gamea, struct gameb &club_data=gameb, struct gamec &player_data=gamec);
+void save_metadata(const std::string &game_path, struct saves &saves_dir_data=saves, struct prefs &prefs_data=prefs);
 void update_metadata(int game_nr);
-void save_metadata(const std::string& game_path);
+
 std::filesystem::path construct_saves_folder_path(const std::string& game_path);
 std::filesystem::path construct_save_file_path(const std::string& game_path, int gameNumber, char gameLetter);
 std::filesystem::path construct_game_file_path(const std::string &game_path, const std::string &file_name);

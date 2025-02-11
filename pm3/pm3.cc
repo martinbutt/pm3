@@ -87,7 +87,7 @@ uint8_t determine_player_rating(struct gamec::player &p) {
     return p.sh;
 }
 
-void change_club(int16_t new_club_idx, int player) {
+void change_club(int16_t new_club_idx, const char* game_path, int player) {
 	struct gamea::manager &manager = gamea.manager[player];
 	int old_club_idx = manager.club_idx;
 	manager.club_idx = new_club_idx;
@@ -238,11 +238,12 @@ void change_club(int16_t new_club_idx, int player) {
 			exit(EXIT_FAILURE);
 	}
 
-
     gameb.club[new_club_idx].player_image = gameb.club[old_club_idx].player_image;
-
 	strncpy(gameb.club[new_club_idx].manager, gameb.club[old_club_idx].manager, 16);
-	strncpy(gameb.club[old_club_idx].manager, DEFAULT_MANAGER_NAME, 16);
+
+    struct gameb default_club_data{};
+    load_default_clubdata(game_path, default_club_data);
+	strncpy(gameb.club[old_club_idx].manager, default_club_data.club[old_club_idx].manager, 16);
 }
 
 std::vector<club_player> find_free_players() {
@@ -306,42 +307,42 @@ void save_binary_file(const std::string &filepath, const T &data) {
     file.write(reinterpret_cast<const char*>(&data), sizeof(T));
 }
 
-void load_binaries(int game_nr, const std::string &game_path) {
-    load_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
-    load_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
-    load_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
+void load_binaries(int game_nr, const std::string &game_path, struct gamea &game_data, struct gameb &club_data, struct gamec &player_data) {
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'A'), game_data);
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'B'), club_data);
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'C'), player_data);
 }
 
-void load_default_gamedata(const std::string &game_path) {
-    load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), gamea);
+void load_default_gamedata(const std::string &game_path, struct gamea &game_data) {
+    load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), game_data);
 }
 
-void load_default_clubdata(const std::string &game_path) {
-    load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), gameb);
+void load_default_clubdata(const std::string &game_path, struct gameb &club_data) {
+    load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), club_data);
 }
 
-void load_default_playdata(const std::string &game_path) {
-    load_binary_file(construct_game_file_path(game_path, PLAYDATA_FILE), gamec);
+void load_default_playdata(const std::string &game_path, struct gamec &player_data) {
+    load_binary_file(construct_game_file_path(game_path, PLAYDATA_FILE), player_data);
 }
 
-void load_metadata(const std::string &game_path) {
+void load_metadata(const std::string &game_path, struct saves &saves_dir_data, struct prefs &prefs_data) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
-    load_binary_file(full_path / SAVES_DIR_FILE, saves);
-    load_binary_file(full_path / PREFS_FILE, prefs);
+    load_binary_file(full_path / SAVES_DIR_FILE, saves_dir_data);
+    load_binary_file(full_path / PREFS_FILE, prefs_data);
 }
 
-void save_binaries(int game_nr, const std::string &game_path) {
-    save_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
-    save_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
-    save_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
+void save_binaries(int game_nr, const std::string &game_path, struct gamea &game_data, struct gameb &club_data, struct gamec &player_data) {
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'A'), game_data);
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'B'), club_data);
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'C'), player_data);
 }
 
-void save_metadata(const std::string &game_path) {
+void save_metadata(const std::string &game_path, struct saves &saves_dir_data, struct prefs &prefs_data) {
     std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
-    save_binary_file(full_path / SAVES_DIR_FILE, saves);
-    save_binary_file(full_path / PREFS_FILE, prefs);
+    save_binary_file(full_path / SAVES_DIR_FILE, saves_dir_data);
+    save_binary_file(full_path / PREFS_FILE, prefs_data);
 }
 
 void update_metadata(int game_nr) {

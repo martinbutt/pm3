@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (opt_new_club_idx != -1) {
-        change_club(opt_new_club_idx);
+        change_club(opt_new_club_idx, game_path);
         save_binaries(game_nr, game_path);
         update_metadata(game_nr);
         save_metadata(game_path);
