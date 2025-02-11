@@ -4,6 +4,7 @@
 #include <cstring>
 #include <vector>
 #include <filesystem>
+#include <fstream>
 
 struct gamea gamea;
 struct gameb gameb;
@@ -280,7 +281,6 @@ std::vector<club_player> get_my_players(int player) {
     return my_players;
 }
 
-
 void level_aggression() {
     for (int16_t i = 0; i < 3932; ++i) {
         struct gamec::player &player = get_player(i);
@@ -288,116 +288,60 @@ void level_aggression() {
     }
 }
 
-void load_binaries(int game_nr, char *saves_path) {
-    char* full_path = append_trailing_slash(saves_path);
-
-    size_t gamexa_len = asprintf(&gamexa, "%sGAME%.1dA", full_path != nullptr ? full_path : "", game_nr);
-    fga = fopen(gamexa, "r");
-    if (fga == nullptr) {
-        printf("Could not open file: %s\n", gamexa);
-        exit(EXIT_FAILURE);
+template <typename T>
+void load_binary_file(const std::string& filepath, T& data) {
+    std::ifstream file(filepath, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Could not open file for reading: " + filepath);
     }
-    fread(&gamea, sizeof (struct gamea), 1, fga);
-    fclose(fga);
-
-    size_t gamexb_len = asprintf(&gamexb, "%sGAME%.1dB", full_path != nullptr ? full_path : "", game_nr);
-    fgb = fopen(gamexb, "r");
-    if (fgb == nullptr) {
-        printf("Could not open file: %s\n", gamexb);
-        exit(EXIT_FAILURE);
-    }
-    fread(&gameb, sizeof (struct gameb), 1, fgb);
-    fclose(fgb);
-
-    size_t gamexc_len = asprintf(&gamexc, "%sGAME%.1dC", full_path != nullptr ? full_path : "", game_nr);
-    fgc = fopen(gamexc, "r");
-    if (fgc == nullptr) {
-        printf("Could not open file: %s\n", gamexc);
-        exit(EXIT_FAILURE);
-    }
-    fread(&gamec, sizeof (struct gamec), 1, fgc);
-    fclose(fgc);
+    file.read(reinterpret_cast<char*>(&data), sizeof(T));
 }
 
-void load_default_gamedata(char *game_path) {
-    char *full_path = append_trailing_slash(game_path);
-
-    size_t gamexa_len = asprintf(&gamexa, "%sgamedata.dat", full_path != nullptr ? full_path : "");
-    fga = fopen(gamexa, "r");
-    if (fga == nullptr) {
-        printf("Could not open file: %s\n", gamexa);
-        exit(EXIT_FAILURE);
+template <typename T>
+void save_binary_file(const std::string& filepath, const T& data) {
+    std::ofstream file(filepath, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Could not open file for writing: " + filepath);
     }
-    fread(&gamea, sizeof(struct gamea), 1, fga);
-    fclose(fga);
+    file.write(reinterpret_cast<const char*>(&data), sizeof(T));
 }
 
-void load_default_clubdata(char *game_path) {
-    char *full_path = append_trailing_slash(game_path);
-
-    size_t gamexb_len = asprintf(&gamexb, "%sclubdata.dat", full_path != nullptr ? full_path : "");
-    fgb = fopen(gamexb, "r");
-    if (fgb == nullptr) {
-        printf("Could not open file: %s\n", gamexb);
-        exit(EXIT_FAILURE);
-    }
-    fread(&gameb, sizeof(struct gameb), 1, fgb);
-    fclose(fgb);
+void load_binaries(int game_nr, const std::string& game_path) {
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
+    load_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
 }
 
-void load_default_playdata(char *game_path) {
-    char *full_path = append_trailing_slash(game_path);
-
-    size_t gamexc_len = asprintf(&gamexc, "%splaydata.dat", full_path != nullptr ? full_path : "");
-    fgc = fopen(gamexc, "r");
-    if (fgc == nullptr) {
-        printf("Could not open file: %s\n", gamexc);
-        exit(EXIT_FAILURE);
-    }
-    fread(&gamec, sizeof(struct gamec), 1, fgc);
-    fclose(fgc);
+void load_default_gamedata(const std::string& game_path) {
+    load_binary_file(construct_game_file_path(game_path, "gamedata.dat"), gamec);
 }
 
-void load_metadata(char *saves_path) {
-    char* full_path = append_trailing_slash(saves_path);
-
-    size_t saves_len = asprintf(&savesx, "%sSAVES.DIR", full_path != nullptr ? full_path : "");
-    fgs = fopen(savesx, "r");
-    if (fgs == nullptr) {
-        printf("Could not open file: %s\n", savesx);
-        exit(EXIT_FAILURE);
-    }
-    fread(&saves, sizeof (struct saves), 1, fgs);
-    fclose(fgs);
-
-    size_t prefs_len = asprintf(&prefsx, "%sPREFS", full_path != nullptr ? full_path : "");
-    fgf = fopen(prefsx, "r");
-    if (fgf == nullptr) {
-        printf("Could not open file: %s\n", prefsx);
-        exit(EXIT_FAILURE);
-    }
-    fread(&prefs, sizeof (struct prefs), 1, fgf);
-    fclose(fgf);
+void load_default_clubdata(const std::string& game_path) {
+    load_binary_file(construct_game_file_path(game_path, "clubdata.dat"), gamec);
 }
 
-void save_binaries(int game_nr, char *saves_path) {
+void load_default_playdata(const std::string& game_path) {
+    load_binary_file(construct_game_file_path(game_path, "playdata.dat"), gamec);
+}
 
-    char* full_path = append_trailing_slash(saves_path);
+void load_metadata(const std::string& game_path) {
+    std::filesystem::path full_path = construct_saves_folder_path(game_path);
 
-    size_t gamexa_len = asprintf(&gamexa, "%sGAME%.1dA", full_path != nullptr ? full_path : "", game_nr);
-    fga = fopen(gamexa, "w+");
-    fwrite(&gamea, sizeof (struct gamea), 1, fga);
-    fclose(fga);
+    load_binary_file(full_path / "SAVES.DIR", saves);
+    load_binary_file(full_path / "PREFS", prefs);
+}
 
-    size_t gamexb_len = asprintf(&gamexb, "%sGAME%.1dB", full_path != nullptr ? full_path : "", game_nr);
-    fgb = fopen(gamexb, "w+");
-    fwrite(&gameb, sizeof (struct gameb), 1, fgb);
-    fclose(fgb);
+void save_binaries(int game_nr, const std::string& game_path) {
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'A'), gamea);
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'B'), gameb);
+    save_binary_file(construct_save_file_path(game_path, game_nr, 'C'), gamec);
+}
 
-    size_t gamexc_len = asprintf(&gamexc, "%sGAME%.1dC", full_path != nullptr ? full_path : "", game_nr);
-    fgc = fopen(gamexc, "w+");
-    fwrite(&gamec, sizeof (struct gamec), 1, fgc);
-    fclose(fgc);
+void save_metadata(const std::string& game_path) {
+    std::filesystem::path full_path = construct_saves_folder_path(game_path);
+
+    save_binary_file(full_path / "SAVES.DIR", saves);
+    save_binary_file(full_path / "PREFS", prefs);
 }
 
 void update_metadata(int game_nr) {
@@ -409,29 +353,16 @@ void update_metadata(int game_nr) {
     saves.game[game_nr - 1].manager[1].club_idx = gamea.manager[1].club_idx;
 }
 
-void save_metadata(char *saves_path) {
-    char* full_path = append_trailing_slash(saves_path);
-
-    size_t saves_len = asprintf(&savesx, "%sSAVES.DIR", full_path != nullptr ? full_path : "");
-    fgs = fopen(savesx, "w+");
-    fwrite(&saves, sizeof (struct saves), 1, fgs);
-    fclose(fgs);
-
-    size_t prefs_len = asprintf(&prefsx, "%sPREFS", full_path != nullptr ? full_path : "");
-    fgf = fopen(prefsx, "w+");
-    fwrite(&prefs, sizeof (struct prefs), 1, fgf);
-    fclose(fgf);
+std::filesystem::path construct_saves_folder_path(const std::string &game_path) {
+    return std::filesystem::path(game_path) / get_saves_folder(get_pm3_game_type(game_path.c_str()));
 }
 
-char* append_trailing_slash(char* path) {
-    size_t len = strlen(path);
-    if (len == 0 || path[len - 1] == '/' || path[len - 1] == '\\') {
-        return path;
-    }
+std::filesystem::path construct_save_file_path(const std::string &game_path, int game_number, char game_letter) {
+    return construct_saves_folder_path(game_path) / ("GAME" + std::to_string(game_number) + game_letter);
+}
 
-    path[len] = PATH_SEPARATOR;
-    path[len + 1] = '\0';
-    return path;
+std::filesystem::path construct_game_file_path(const std::string &game_path, const std::string &file_name) {
+    return std::filesystem::path(game_path) / file_name;
 }
 
 pm3_game_type get_pm3_game_type(const char *game_path) {

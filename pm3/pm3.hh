@@ -1,14 +1,18 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <assert.h>
-#include <getopt.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+#include <cassert>
+#include <cstdlib>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+
 #include <vector>
+#include <string>
+#include <iostream>
+#include <filesystem>
+#include <getopt.h>
+
 
 #define CLUB_IDX_MAX 244
 
@@ -757,15 +761,17 @@ void change_club(int16_t new_club_idx, int player = 0);
 void level_aggression();
 
 void check_consistency(void);
-void load_binaries(int game_nr, char *saves_path);
-void load_default_gamedata(char *game_path);
-void load_default_clubdata(char *game_path);
-void load_default_playdata(char *game_path);
-void load_metadata(char *saves_path);
-void save_binaries(int game_nr, char *saves_path);
+void load_binaries(int game_nr, const std::string& game_path);
+void load_default_gamedata(const std::string& game_path);
+void load_default_clubdata(const std::string& game_path);
+void load_default_playdata(const std::string& game_path);
+void load_metadata(const std::string& game_path);
+void save_binaries(int game_nr, const std::string& game_path);
 void update_metadata(int game_nr);
-void save_metadata(char *saves_path);
-char* append_trailing_slash(char* path);
+void save_metadata(const std::string& game_path);
+std::filesystem::path construct_saves_folder_path(const std::string& game_path);
+std::filesystem::path construct_save_file_path(const std::string& game_path, int gameNumber, char gameLetter);
+std::filesystem::path construct_game_file_path(const std::string &game_path, const std::string &file_name);
 pm3_game_type get_pm3_game_type(const char *game_path);
 const char* get_saves_folder(pm3_game_type game_type);
 

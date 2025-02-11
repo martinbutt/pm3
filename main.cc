@@ -79,7 +79,6 @@ int main(int argc, char *argv[]) {
         opt_verbose = 0;
 
     char *game_path = nullptr;
-    char *saves_path = nullptr;
     int game_nr = -1, opt_soup_up = 0;
     int opt_new_club_idx = -1;
     int opt_club_idx = -2;
@@ -156,9 +155,6 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    saves_path = (char *) malloc(strlen(game_path) + 7);
-    sprintf(saves_path, "%s%c%s", game_path, PATH_SEPARATOR, get_saves_folder(game_type));
-
     if (opt_verbose) {
         fprintf(stderr, "sizeof (gamea)        = 0x%0zx\n", sizeof(struct gamea));
         fprintf(stderr, "sizeof (gameb.club)   = 0x%0zx\n", sizeof(struct gameb::club));
@@ -169,7 +165,7 @@ int main(int argc, char *argv[]) {
 	assert(sizeof (struct gameb::club)   == 0x023A);
 	assert(sizeof (struct gamec::player) == 0x0028);
 
-    load_binaries(game_nr, saves_path);
+    load_binaries(game_nr, game_path);
 
     if (opt_dump_gamea) {
         printf("GAME%dA\n", game_nr);
@@ -201,19 +197,19 @@ int main(int argc, char *argv[]) {
 
     if (opt_level_aggression) {
         level_aggression();
-        save_binaries(game_nr, saves_path);
+        save_binaries(game_nr, game_path);
     }
 
     if (opt_soup_up) {
         soup_up();
-        save_binaries(game_nr, saves_path);
+        save_binaries(game_nr, game_path);
     }
 
     if (opt_new_club_idx != -1) {
         change_club(opt_new_club_idx);
-        save_binaries(game_nr, saves_path);
+        save_binaries(game_nr, game_path);
         update_metadata(game_nr);
-        save_metadata(saves_path);
+        save_metadata(game_path);
     }
 
     free(gamexa);
