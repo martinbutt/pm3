@@ -32,12 +32,6 @@
 #define PREFS_FILE "PREFS"
 #define GAME_FILE_PREFIX "GAME"
 
-#ifdef _WIN32
-#define PATH_SEPARATOR '\\'
-#else
-#define PATH_SEPARATOR '/'
-#endif
-
 typedef enum {
     PM3_UNKNOWN,
     PM3_STANDARD,
