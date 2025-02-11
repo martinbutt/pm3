@@ -313,11 +313,11 @@ void load_binaries(int game_nr, const std::string &game_path) {
 }
 
 void load_default_gamedata(const std::string &game_path) {
-    load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), gamec);
+    load_binary_file(construct_game_file_path(game_path, GAMEDATA_FILE), gamea);
 }
 
 void load_default_clubdata(const std::string &game_path) {
-    load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), gamec);
+    load_binary_file(construct_game_file_path(game_path, CLUBDATA_FILE), gameb);
 }
 
 void load_default_playdata(const std::string &game_path) {
