@@ -165,6 +165,7 @@ int main(int argc, char *argv[]) {
 	assert(sizeof (struct gameb::club)   == 0x023A);
 	assert(sizeof (struct gamec::player) == 0x0028);
 
+    load_metadata(game_path);
     load_binaries(game_nr, game_path);
 
     if (opt_dump_gamea) {
